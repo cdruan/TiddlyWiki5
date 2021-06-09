@@ -1,22 +1,89 @@
 created: 20180905075846391
-modified: 20210523210131083
+modified: 20210608104815802
 tags: [[WebServer Guides]]
 title: Using the external JavaScript template
 type: text/vnd.tiddlywiki
 
-Setting the [[root-tiddler|WebServer Parameter: root-tiddler]] parameter to `$:/core/save/all-external-js` switches to a special template that externalises TiddlyWiki's core ~JavaScript into a separate file. For example:
+\define jsFileName() twcore-$(version)$.js
+
+! Background
+
+TiddlyWiki in the single file configuration ordinarily packs everything into a single file: your data, and the ~JavaScript, CSS and HTML comprising ~TiddlyWiki itself. This lack of dependencies is usually very convenient: it means that it is impossible for the parts of a ~TiddlyWiki to become separated, and enormously improves the chances of it still functioning in the future.
+
+However, there is some inefficiency in this arrangement because the core code is repeatedly loaded and saved every time the content of the wiki is saved. This inefficiency is partially ameliorated when working in the client server configuration because once the wiki is loaded by the browser the synchronisation process only transmits individual tiddlers back and forth to the server.
+
+The remaining inefficiency when working in the client server configuration is that the single page wiki that is initially loaded will contain a copy of the entire core code of ~TiddlyWiki, making it impossible for the browser to cache it.
+
+<<.warning "Since working with several files, that belong together, will open up all kinds of synchronisation challenges, this functionality is intended for advanced users.">>
+
+
+
+! Usecases
+
+* Nodejs server with caching enabled
+* ~WebDav server with caching enabled
+
+
+!! Initializing a new wiki
+
+The following commands assume, that the "tiddlywiki" package is installed globally. `tiddlywiki --version` will show you the actual version you use. For the following commands as described here it should show `5.2.0` or higher. 
+
+''The following commands will''
+
+* Initialize a new "external core" wiki
+* Build 2 files and save them in the `output` directory
+* Build the "<<jsFileName>>" (1) file and save it to `output` directory
+* Open a server with ''cache enabled'' on port 8080 so you can test it with http://localhost:8080
+
+<<<
+```
+tiddlywiki ./myWiki --init server-external-js
+tiddlywiki ./myWiki --build index
+tiddlywiki ./myWiki --build twcore
+tiddlywiki ./myWiki --build listen
+```
+<<<
+
+<<.tip """You will need to activate the browser ''Developer tools [F12] : Network'' tab and reload the page to see, how it works""">>
+
+!! Node server with caching enabled
+
+The mechanism will be activated by setting the [[root-tiddler|WebServer Parameter: root-tiddler]] parameter to `$:/core/save/all-external-js`. This template externalises ~TiddlyWiki's core ~JavaScript into a separate file. 
+
+The following command will activate a "node-js server" with caching enabled. It will transfer the wiki with 2 GET requests, where the core can be cached by the browser.
 
 ```
-tiddlywiki editions/tw5.com-server/ --listen host=0.0.0.0 "root-tiddler=$:/core/save/all-external-js"
+tiddlywiki editions/tw5.com-server/ --listen 'root-tiddler=$:/core/save/all-external-js' use-browser-cache=yes
 ```
 
-To properly save your snapshot for offline use, it is necessary to set the tiddler $:/config/SaveWikiButton/Template to contain `$:/core/save/offline-external-js`. You must also save a copy of  `twcore-TIDDLYWIKI_VERSION.js` in the same folder as your HTML file. From your own wiki, open the tiddler [[$:/language/Snippets/GetTiddlyWikiJS]]. It will show you how to acquire ~TiddlyWiki's core ~JavaScript.
+<<.tip """You will need to activate the browser ''Developer tools [F12] : Network'' tab and reload the page to see, how it works""">>
 
-The provided edition `server-external-js` contains all the configuration necessary to use the external ~JavaScript template.
+!! Saving with ~WebDav
 
-!! Upgrading Your Snapshots
+See: [[Saving via WebDAV]]
 
-Before you proceed, backup your wiki first! Follow the steps below to upgrade a single-file wiki with the external-js template:
+
+!! Creating the files with a development environment
+
+<<.warning """These 2 files can be used from a local `file:///` URL for testing purposes. If you use it in production, you need to be careful! """>>
+
+The following command will build both files in the `output` directory of the "server-external-js" edition:
+
+```
+tiddlywiki editions\server-external-js\ --build index
+```
+
+!! Saving
+
+To properly save your snapshot for offline use, it is necessary to set the tiddler $:/config/SaveWikiButton/Template to contain `$:/core/save/offline-external-js`. 
+
+You must also save a copy of  `twcore-TIDDLYWIKI_VERSION.js` in the same folder as your HTML file. From your own wiki, open the tiddler [[$:/language/Snippets/GetTiddlyWikiJS]]. It will show you how to acquire ~TiddlyWiki's core ~JavaScript.
+
+The provided ''edition'' `server-external-js` contains all the configuration necessary to use the external ~JavaScript template.
+
+!! Upgrading your snapshots
+
+<<.tip """Before you proceed, ''backup'' your wiki first! Follow the steps below to upgrade a single-file wiki with the external-js template:""">>
 
 # Proceed with the [[upgrade process for standalone TiddlyWikis|Upgrading]]. Your wiki will be converted to a full standalone HTML.
 
@@ -28,10 +95,14 @@ Before you proceed, backup your wiki first! Follow the steps below to upgrade a 
 
 # Save your wiki again. Your wiki is now converted to using the external core.
 
-!! Background
+! Export the core
 
-TiddlyWiki in the single file configuration ordinarily packs everything into a single file: your data, and the ~JavaScript, CSS and HTML comprising TiddlyWiki itself. This lack of dependencies is usually very convenient: it means that it is impossible for the parts of a TiddlyWiki to become separated, and enormously improves the chances of it still functioning in the future.
+In the external-js setting, you must have a copy of `twcore-TIDDLYWIKI_VERSION.js` alongside your single-file wiki. To obtain the core ~JavaScript, use one of the following methods:
 
-However, there is some inefficiency in this arrangement because the core code is repeatedly loaded and saved every time the content of the wiki is saved. This inefficiency is partially ameliorated when working in the client server configuration because once the wiki is loaded by the browser the synchronisation process only transmits individual tiddlers back and forth to the server.
+*If this wiki's core library has not been externalized, you can click the following button to export ~TiddlyWiki's core from your own wiki:
 
-The remaining inefficiency when working in the client server configuration is that the single page wiki that is initially loaded will contain a copy of the entire core code of TiddlyWiki, making it impossible for the browser to cache it.
+:<div><$button class="tc-btn-big-green"  >
+<$action-sendmessage $message="tm-download-file" $param="$:/core/templates/tiddlywiki5.js" filename=<<jsFileName>>/>
+{{$:/core/images/download-button}} Export ~TiddlyWiki Core
+</$button></div>
+

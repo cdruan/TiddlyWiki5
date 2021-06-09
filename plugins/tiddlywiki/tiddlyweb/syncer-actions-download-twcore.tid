@@ -1,8 +1,11 @@
 title: $:/plugins/tiddlywiki/tiddlyweb/syncer-actions/download-twcore
 tags: $:/tags/SyncerDropdown
 
+\define jsFileName() twcore-$(version)$.js
+
 <$reveal state="$:/config/SaveWikiButton/Template" type="match" text="$:/core/save/offline-external-js">
-<$button class="tc-btn-invisible" to="$:/language/Snippets/GetTiddlyWikiJS">
-{{$:/core/images/star-filled}} Get twcore.js
+<$button class="tc-btn-invisible">
+{{$:/core/images/download-button}} Save twcore-<<version>>.js for offline use
+<$action-sendmessage $message="tm-download-file" $param="$:/core/templates/tiddlywiki5.js" filename=<<jsFileName>>/>
 </$button>
 </$reveal>
