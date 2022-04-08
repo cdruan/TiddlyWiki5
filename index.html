@@ -182,8 +182,6 @@ Error message and password prompt
 
 <li>$:/snippets/show-markdown-body</li>
 
-<li>$:/state/plugin-info-967733768-$:/plugins/tiddlywiki/markdown---218681999</li>
-
 <li>$:/status/IsAnonymous</li>
 
 <li>$:/status/IsReadOnly</li>
@@ -391,8 +389,6 @@ Error message and password prompt
 {"title":"$:/snippets/misc-macros","created":"20220208035919646","modified":"20220219064048105","tags":"$:/tags/Macro","type":"text/vnd.tiddlywiki","text":"\\define rememberq(Q, A)\n\t''Question:''\n  \u003Cdiv>\n\t\n\t\u003C\u003C__Q__>>\n\t\n\t\u003C/div>\n\t\u003Chr>\n\t\u003Cdiv>\n\t\u003Cdetails>\n    \u003Csummary>''Answer''\u003C/summary>\n\n\t  $A$\n\n  \u003C/details>\n  \u003C/div>\n\\end\n\n\\define quote(s:\"hi\") \"$s$&quot;\n\n\\define sayhi() Hi!","revision":"0","bag":"default"},
 
 {"title":"$:/snippets/show-markdown-body","created":"20220211231003650","modified":"20220215073926517","tags":"$:/tags/ViewTemplate","type":"text/vnd.tiddlywiki","text":"\u003C$list filter=\"[\u003CcurrentTiddler>get[type]match[text/x-markdown]]\" variable=\"notused\" >\n\u003Chr style=\"border-top: 1px\">\n\n''markdown source:''\n\u003C$codeblock code={{{ [\u003CcurrentTiddler>get[text]] }}} language={{{ [\u003CcurrentTiddler>get[type]else[text/vnd.tiddlywiki]] }}}/>\n\u003C/$list>","revision":"0","bag":"default"},
-
-{"created":"20220408072608658","title":"$:/state/plugin-info-967733768-$:/plugins/tiddlywiki/markdown---218681999","text":"syntax","modified":"20220408072608658","revision":"1","bag":"default"},
 
 {"title":"$:/status/IsAnonymous","text":"yes","revision":"1","bag":"default"},
 
